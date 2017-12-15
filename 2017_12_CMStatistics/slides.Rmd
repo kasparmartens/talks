@@ -6,7 +6,6 @@ output:
   xaringan::moon_reader:
     css: ["default", "my-theme.css"]
     lib_dir: libs
-    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
     nature:
       highlightStyle: github
       highlightLines: true
@@ -20,6 +19,10 @@ options(htmltools.dir.version = FALSE)
 background-image: url(fig/PT_0.png)
 background-position: 50% 80%
 background-size: 60%
+
+# Background
+
+Bayesian inference for high-dimensional models is challenging: it is difficult to explore multimodal distributions.
 
 $$\def\sc#1{\dosc#1\csod}
 \def\dosc#1#2\csod{{\rm #1{\small #2}}}
@@ -39,11 +42,6 @@ $$\def\sc#1{\dosc#1\csod}
 \newcommand{\boldR}{\mathbf{R}}
 \newcommand{\N}{\mathcal{N}}
 \newcommand{\dist}{\text{dist}}$$
-
-
-# Background
-
-Bayesian inference for high-dimensional models is challenging: it is difficult to explore multimodal distributions.
 
 ---
 background-image: url(fig/PT_1.png)
@@ -172,3 +170,102 @@ using the following exchange moves
 Number of mode jumps (cumulative)
 
 ![](fig/toy_njumps.png)
+
+---
+
+# Factorial HMM
+
+Extension of HMM: multiple latent sequences
+
+.pull-left[
+![](fig/FHMM_step1.png)
+]
+
+---
+
+# Factorial HMM
+
+.pull-left[
+![](fig/FHMM.png)
+]
+
+.pull-right[
+$$\begin{align*} 
+(w_1, \ldots, w_K) &\sim \text{Dir}(\alpha, \ldots, \alpha) \\
+Y_t | X_{:, t}, w &\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+\end{align*}$$
+
+]
+
+
+---
+
+# Factorial HMM
+
+.pull-left[
+![](fig/FHMM.png)
+]
+
+.pull-right[
+$$\begin{align*} 
+(w_1, \ldots, w_K) &\sim \text{Dir}(\alpha, \ldots, \alpha) \\
+Y_t | X_{:, t}, w &\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+\end{align*}$$
+
+
+Inference by Gibbs sampling:
+
+1. Sample $\boldw | Y, X$ 
+    * e.g. by random walk MH
+2. Sample $X | \boldw, Y$
+    * Full FB recursion becomes quickly infeasible, due to complexity $O(2^{2K}T)$
+    * Solutions:
+        * Update one row of $X$ conditional on the rest
+        * Hamming Ball sampling (Titsias and Yau 2016)
+]
+
+---
+
+# Factorial HMM example
+
+Motivated by a cancer genomics application. 
+
+Consider the following example ( $K=3$) with multiple underlying explanations, where $w_1 + w_2 \approx w_3$
+
+$$\begin{align*} 
+Y_t | X_{:, t}, w &\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+\end{align*}$$
+
+![](fig/FHMM_multiple_modes.png)
+
+---
+background-image: url(fig/ensemble_HB.gif)
+background-position: 50% 60%
+background-size: 60%
+
+# Factorial HMM example
+
+---
+background-image: url(fig/FHMM_loglik.png)
+background-position: 50% 60%
+background-size: 60%
+
+# Factorial HMM example
+
+---
+class: inverse, middle, center
+background-image: url(fig/schema_crossover_without_labels.png)
+background-position: 50% 60%
+background-size: 40%
+
+# Augmented Ensemble MCMC with applications to Factorial HMMs
+
+Kaspar Märtens, Michalis Titsias, Christopher Yau
+
+<br/> <br/> <br/> <br/> <br/>
+
+kaspar.martens@gmail.com
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<a href="#" class="fa fa-twitter"></a>  @kasparmartens
