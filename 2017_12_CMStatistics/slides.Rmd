@@ -6,6 +6,7 @@ output:
   xaringan::moon_reader:
     css: ["default", "my-theme.css"]
     lib_dir: libs
+    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
     nature:
       highlightStyle: github
       highlightLines: true
