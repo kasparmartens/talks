@@ -4,7 +4,7 @@ subtitle: ""
 author: "Kaspar Märtens, Michalis Titsias, Christopher Yau"
 output:
   xaringan::moon_reader:
-    css: ["default", "my-theme.css"]
+    css: ["my-theme.css"]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -255,14 +255,17 @@ background-size: 60%
 ---
 class: inverse, middle, center
 background-image: url(fig/schema_crossover_without_labels.png)
-background-position: 50% 60%
+background-position: 50% 65%
 background-size: 40%
 
 # Augmented Ensemble MCMC with applications to Factorial HMMs
 
 Kaspar Märtens, Michalis Titsias, Christopher Yau
 
-<br/> <br/> <br/> <br/> <br/>
+https://arxiv.org/abs/1703.08520
+
+
+<br/> <br/> <br/> <br/> 
 
 kaspar.martens@gmail.com
 
