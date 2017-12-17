@@ -67,6 +67,8 @@ background-size: 60%
 
 # How to exchange information between an ensemble of chains
 
+Consider $T$-dimensional vectors $\boldx_i \sim \pi(\cdot)^{\beta_i}$ and $\boldx_j \sim \pi(\cdot)^{\beta_j}$.
+
 --
 1. **Swap move**: Propose to swap (using Metropolis-Hastings to accept/reject)
     
@@ -96,7 +98,7 @@ background-size: 70%
 
 We construct an auxiliary variable Gibbs sampler, using a one-point crossover
 
-1. Generate auxiliary $(\boldu, \boldv) \sim p(\boldu, \boldv | \boldx_i, \boldx_j)$
+1. Introduce auxiliary variables $(\boldu, \boldv) \sim p(\boldu, \boldv | \boldx_i, \boldx_j)$
 
      * Uniform distribution over all crossovers of $(\boldx_i, \boldx_j)$
 
@@ -112,7 +114,7 @@ background-size: 70%
 
 We construct an auxiliary variable Gibbs sampler, using a one-point crossover
 
-1. Generate auxiliary $(\boldu, \boldv) \sim p(\boldu, \boldv | \boldx_i, \boldx_j)$
+1. Introduce auxiliary variables  $(\boldu, \boldv) \sim p(\boldu, \boldv | \boldx_i, \boldx_j)$
 
      * Uniform distribution over all crossovers of $(\boldx_i, \boldx_j)$
 
@@ -122,6 +124,33 @@ p(\boldx_i, \boldx_j | \ee) &= \frac{1}{Z} \pi_i(\boldx_i) \pi_j(\boldx_j)  p(\b
 &= \frac{1}{Z} \pi_i(\boldx_i) \pi_j(\boldx_j)  p(\boldx_i, \boldx_j | \boldu, \boldv) \\
 &= \frac{1}{Z} \pi_i(\boldx_i) \pi_j(\boldx_j) I((\boldx_i, \boldx_j) \in \text{Crossover} (\boldu, \boldv)) 
 \end{align*}$$
+
+---
+
+# Augmented Ensemble MCMC
+
+The auxiliary variable construction can be treated as a marginal proposal
+
+$$\begin{align*}
+Q(\boldz_i, \boldz_j | \boldx_i, \boldx_j) 
+&= \iint \frac{1}{Z} \pi_i(\boldz_i) \pi_j(\boldz_j) p(\boldz_i, \boldz_j | \boldu, \boldv) p(\boldu, \boldv | \boldx_i, \boldx_j) d\boldu d\boldv \\
+&= \pi_i(\boldz_i) \pi_j(\boldz_j) \iint \frac{1}{Z} p(\boldz_i, \boldz_j | \boldu, \boldv) p(\boldx_i, \boldx_j | \boldu, \boldv) d\boldu d\boldv \\
+&= \pi_i(\boldz_i) \pi_j(\boldz_j) H(\boldz_i, \boldz_j | \boldx_i, \boldx_j).
+\end{align*}$$
+
+--
+
+The Metropolis-Hastings acceptance probability
+$$\begin{align*}
+\alpha 
+%= \frac{p(\boldz_i, \boldz_j) Q(\boldx_i, \boldx_j | \boldz_i, \boldz_j)}{p(\boldx_i, \boldx_j) Q(\boldz_i, \boldz_j | \boldx_i, \boldx_j)}
+&= \frac{\pi_i(\boldz_i) \pi_j(\boldz_j) Q(\boldx_i, \boldx_j | \boldz_i, \boldz_j)}{\pi_i(\boldx_i) \pi_j(\boldx_j) Q(\boldz_i, \boldz_j | \boldx_i, \boldx_j)} 
+= \frac{\pi_i(\boldz_i) \pi_j(\boldz_j) \pi_i(\boldx_i) \pi_j(\boldx_j) H(\boldx_i, \boldx_j | \boldz_i, \boldz_j)}{\pi_i(\boldx_i) \pi_j(\boldx_j) \pi_i(\boldz_i) \pi_j(\boldz_j) H(\boldz_i, \boldz_j | \boldx_i, \boldx_j)}.
+\end{align*}$$
+
+--
+
+Since $H(\boldz_i, \boldz_j | \boldx_i, \boldx_j) = H(\boldx_i, \boldx_j | \boldz_i, \boldz_j)$ due to symmetry, $\alpha = 1$.
 
 ---
 
@@ -161,7 +190,43 @@ using the following exchange moves
 
 --
 
-![](fig/toy_b5.png)
+![](fig/toy_b2.gif)
+
+---
+
+# Toy example: comparison of samplers
+
+
+* Single chain Gibbs sampler
+* Ensemble of Gibbs samplers (two chains: $T_1 = 1$, $T_2 = 4$), 
+using the following exchange moves
+    * Swap (accept/reject)
+    * Uniformly chosen crossover (accept/reject)
+    * Augmented crossover
+
+![](fig/toy_b5.gif)
+
+---
+
+# Toy example: comparison of samplers
+
+
+* Single chain Gibbs sampler
+* Ensemble of Gibbs samplers (two chains: $T_1 = 1$, $T_2 = 4$), 
+using the following exchange moves
+    * Swap (accept/reject)
+    * Uniformly chosen crossover (accept/reject)
+    * Augmented crossover
+
+![](fig/toy_b10.gif)
+
+---
+
+# Toy example: comparison of samplers
+
+Traces for $B=2$ vs $B=10$:
+![](fig/toy_b2.png)
+![](fig/toy_b10.png)
 
 ---
 
@@ -221,8 +286,22 @@ Inference by Gibbs sampling:
     * Full FB recursion becomes quickly infeasible, due to complexity $O(2^{2K}T)$
     * Solutions:
         * Update one row of $X$ conditional on the rest
-        * Hamming Ball sampling (Titsias and Yau 2016)
+        * Hamming Ball sampling (Titsias and Yau, 2017)
 ]
+
+---
+
+# Augmented crossover for Factorial HMMs
+
+1. How to extend the auxiliary variable crossover move to multiple latent sequences?
+
+--
+
+2. How to efficiently compute $\pi(\boldz_i)^{\beta_i} p(\boldz_j)^{\beta_j}$ for every pair $(\boldz_i, \boldz_j) \in \text{Crossover}(\boldu, \boldv)$
+
+![](fig/schema_crossover.png)
+
+These can be computed in $O(K T)$.
 
 ---
 
@@ -237,20 +316,36 @@ Y_t | X_{:, t}, w &\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\
 \end{align*}$$
 
 ![](fig/FHMM_multiple_modes.png)
+---
+# Factorial HMM example
+
+Gibbs sampler + ensemble versions:
+
+![](fig/ensemble_Gibbs_small.gif)
+
+Hamming Ball sampler + ensemble versions:
+
+![](fig/ensemble_HB_small.gif)
 
 ---
-background-image: url(fig/ensemble_HB.gif)
+# Factorial HMM example - extended
+
+Gibbs sampler + ensemble versions:
+
+![](fig/ensemble_Gibbs.gif)
+
+Hamming Ball sampler + ensemble versions:
+
+![](fig/ensemble_HB.gif)
+
+---
+background-image: url(fig/logposterior.png)
 background-position: 50% 60%
-background-size: 60%
+background-size: 100%
 
 # Factorial HMM example
 
----
-background-image: url(fig/FHMM_loglik.png)
-background-position: 50% 60%
-background-size: 60%
-
-# Factorial HMM example
+log-posteriors
 
 ---
 class: inverse, middle, center
@@ -265,7 +360,7 @@ Kaspar Märtens, Michalis Titsias, Christopher Yau
 https://arxiv.org/abs/1703.08520
 
 
-<br/> <br/> <br/> <br/> 
+<br/> <br/> <br/> <br/> <br/> 
 
 kaspar.martens@gmail.com
 
