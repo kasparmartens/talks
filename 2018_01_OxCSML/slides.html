@@ -55,7 +55,7 @@ background-size: 60%
 --
 
 Instead of simply targeting `\(\pi(x)\)`, 
-introduce a temperature ladder `\(T_1 &lt; T_2 &lt; \ldots &lt; T_K\)` and run multiple MCMC chains, with chain `\(k\)` targeting
+introduce a temperature ladder `\(1.0 = T_1 &lt; T_2 &lt; \ldots &lt; T_K\)` and run multiple MCMC chains, with chain `\(k\)` targeting
 $$ \pi(x)^{\beta_k} \text{  where  } \beta_k = 1/T_k$$
 
 ---
@@ -222,11 +222,16 @@ With 10 blocks:
 Number of mode jumps (cumulative)
 
 ![](fig/toy_njumps.png)
+
+---
+class: inverse, middle, center
+
+# Factorial HMMs
+
 ---
 
-# Factorial HMM
+# Hidden Markov Model (HMM)
 
-Standard HMM:
 
 ![](fig/HMM.png)
 
@@ -244,16 +249,16 @@ Extension of HMM: multiple latent sequences. We focus on: binary `\(\boldX\)`
 
 # Factorial HMM
 
+Extension of HMM: multiple latent sequences. We focus on: binary `\(\boldX\)`
+
 .pull-left[
 ![](fig/FHMM.png)
 ]
 
 .pull-right[
 `$$\begin{align*} 
-(w_1, \ldots, w_K) &amp;\sim \text{Dir}(\alpha, \ldots, \alpha) \\
-Y_t | X_{:, t}, w &amp;\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+Y_t | X_{:, t}, w &amp;\sim f\left(\sum_{k=1}^K w_k X_{k, t}\right)
 \end{align*}$$`
-
 ]
 
 
@@ -267,8 +272,7 @@ Y_t | X_{:, t}, w &amp;\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigm
 
 .pull-right[
 `$$\begin{align*} 
-(w_1, \ldots, w_K) &amp;\sim \text{Dir}(\alpha, \ldots, \alpha) \\
-Y_t | X_{:, t}, w &amp;\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+Y_t | X_{:, t}, w &amp;\sim f\left(\sum_{k=1}^K w_k X_{k, t}\right)
 \end{align*}$$`
 
 
@@ -287,7 +291,7 @@ Inference by Gibbs sampling:
 
 # Hamming Ball sampling for Factorial HMM
 
-Update for column `\(\boldx_t\)` illustrated for Hamming Ball `\((r=1)\)` sampling
+Update for column `\(\boldx_t\)` for Hamming Ball `\((r=1)\)` sampling illustrated
 
 ![](fig/HB_sampling.png)
 
@@ -311,8 +315,31 @@ These can be computed in `\(O(K T)\)`.
 
 Motivated by a cancer genomics
 
-![](fig/schema_tumor.png)
+![](fig/schema_tumor0.png)
 
+---
+
+# Factorial HMM application
+
+Motivated by a cancer genomics
+
+`$$\begin{align*} 
+Y_t | X_{:, t}, w &amp;\sim \N\left(h \sum_{k=1}^K w_k X_{k, t}, \sigma^2\right)
+\end{align*}$$`
+
+![](fig/schema_tumor1.png)
+
+---
+
+# Factorial HMM application
+
+Motivated by a cancer genomics
+
+`$$\begin{align*} 
+Y_t | X_{:, t}, w &amp;\sim \N\left(h \sum_{k=1}^K w_k X_{k, t}, \sigma^2\right)
+\end{align*}$$`
+
+![](fig/schema_tumor.png)
 ---
 
 # Factorial HMM example
@@ -320,40 +347,37 @@ Motivated by a cancer genomics
 Consider the following example ( `\(K=3\)`) with multiple underlying explanations, due to `\(w_1 + w_2 \approx w_3\)`
 
 `$$\begin{align*} 
-Y_t | X_{:, t}, w &amp;\sim \mathcal{N}\left(\sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
+Y_t | X_{:, t}, w &amp;\sim \mathcal{N}\left(h \sum_{k=1}^K w_k X_{k, t}, \; \sigma^2\right)
 \end{align*}$$`
 
-![](fig/FHMM_multiple_modes.png)
----
-# Factorial HMM example
-
-Gibbs sampler + ensemble versions:
-
-![](fig/ensemble_Gibbs_small.gif)
-
-Hamming Ball sampler + ensemble versions:
-
-![](fig/ensemble_HB_small.gif)
+![](fig/generatedX.png)
 
 ---
-# Factorial HMM example - extended
-
-Gibbs sampler + ensemble versions:
-
-![](fig/ensemble_Gibbs.gif)
-
-Hamming Ball sampler + ensemble versions:
-
-![](fig/ensemble_HB.gif)
-
----
-background-image: url(fig/logposterior.png)
-background-position: 50% 60%
-background-size: 100%
 
 # Factorial HMM example
 
-log-posteriors
+![](fig/logposteriors.png)
+
+---
+
+# Factorial HMM example
+
+![](fig/trace_of_X.png)
+
+
+---
+background-image: url(fig/real_data/traces_of_X.png)
+background-position: 50% 90%
+background-size: 60%
+
+# Real tumor sequencing data
+
+
+---
+
+# Real tumor sequencing data
+
+![](fig/real_data/logposteriors.png)
 
 ---
 class: inverse, middle, center
